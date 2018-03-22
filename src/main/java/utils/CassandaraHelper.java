@@ -1,15 +1,16 @@
-package ecdlp;
-
+package utils;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Cluster.Builder;
 import com.datastax.driver.core.Session;
 
 public class CassandaraHelper {
+    
+    private static CassandaraHelper instance;
 
-    private static Cluster cluster;
-    private static Session session;
+    private Cluster cluster;
+    private Session session;
 
-    public static void connect(String node, Integer port) {
+    public void connect(String node, Integer port) {
         Builder b = Cluster.builder().addContactPoint(node);
         if (port != null) {
             b.withPort(port);
@@ -19,17 +20,24 @@ public class CassandaraHelper {
         session = cluster.connect();
     }
 
-    public static Session getSession() {
+    public Session getSession() {
         return session;
     }
 
-    public static void close() {
+    public void close() {
         session.close();
         cluster.close();
     }
 
-    public CassandaraHelper() {
+    private CassandaraHelper() {
         super();
+    }
+    
+    public static CassandaraHelper getInstance() {
+        if(instance == null) {
+            instance = new CassandaraHelper();
+        }
+        return instance;
     }
 
 }
