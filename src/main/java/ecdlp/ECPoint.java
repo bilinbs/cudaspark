@@ -2,14 +2,19 @@ package ecdlp;
 
 
 import java.math.BigInteger;
-import java.util.Arrays;
+
+import utils.MathUtil;
+
 import java.io.*;
 
 public class ECPoint implements Serializable{
 
-    public final static BigInteger TWO = new BigInteger("2");
-    public final static BigInteger THREE = new BigInteger("3");
-
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
+    
     private EllipticCurve mother;
 
     private BigInteger x, y;
@@ -110,10 +115,10 @@ public class ECPoint implements Serializable{
             if (!(y2.compareTo(y1) == 0))
                 return new ECPoint(mother);
             else {
-                alpha = ((x1.modPow(TWO, mother.getp())).multiply(THREE))
+                alpha = ((x1.modPow(MathUtil.TWO, mother.getp())).multiply(MathUtil.THREE))
                         .add(mother.geta());
                 alpha = (alpha
-                        .multiply((TWO.multiply(y1)).modInverse(mother.getp())))
+                        .multiply((MathUtil.TWO.multiply(y1)).modInverse(mother.getp())))
                                 .mod(mother.getp());
             }
 
@@ -124,7 +129,7 @@ public class ECPoint implements Serializable{
         }
 
         BigInteger x3, y3;
-        x3 = (((alpha.modPow(TWO, mother.getp())).subtract(x2)).subtract(x1))
+        x3 = (((alpha.modPow(MathUtil.TWO, mother.getp())).subtract(x2)).subtract(x1))
                 .mod(mother.getp());
         y3 = ((alpha.multiply(x1.subtract(x3))).subtract(y1))
                 .mod(mother.getp());
@@ -157,6 +162,12 @@ public class ECPoint implements Serializable{
 
 	}
 
+	public ECPoint halve() {
+	    
+	    BigInteger m = getx().add(mother.geta());
+	    return this;
+	}
+	
 	private ECPoint times16() {
 		try {
 			ECPoint result = this;
